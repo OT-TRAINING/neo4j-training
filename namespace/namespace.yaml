@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microservices
+  labels:
+    app.kubernetes.io/name: microservices
+    app.kubernetes.io/part-of: components
+    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  finalizers:
+  - kubernetes
