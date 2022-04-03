@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-reader
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: reader
+    volumeMounts:
+    - mountPath: /data/reader
+      name: shared-vol
+      readOnly: true
+  restartPolicy: Always
+  volumes:
+    - name: shared-vol
+      hostPath: 
+        path: /data
+        type: Directory
