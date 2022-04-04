@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+ name: aws-pv-hunt
+spec:
+ accessModes:
+ - ReadWriteOnce
+ awsElasticBlockStore:
+   fsType: ext4
+   volumeID: vol-0e1c2e828fa83d786
+ capacity:
+   storage: 10Gi
+ persistentVolumeReclaimPolicy: Retain
+ storageClassName: gp2

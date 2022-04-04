@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ labels:
+   app: mysql
+ name: aws-pvc-hunt
+spec:
+ accessModes:
+ - ReadWriteOnce
+ resources:
+   requests:
+     storage: 4Gi
+ volumeName: aws-pv-hunt
+ storageClassName: gp2
+
+
