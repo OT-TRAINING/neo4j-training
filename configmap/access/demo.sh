@@ -55,3 +55,26 @@ function showCaseConfigMapAllEnvVariableMapping() {
     _runCommand "kubectl delete -f pod-env-full.yaml"
     _runCommand "kubectl delete -f attendance-configmap.yaml"
 }
+
+function showCaseConfigMapMount() {
+    _runCommand "kubectl apply -f ot-configmap.yaml"
+    _runCommand "kubectl get configmap"
+    _runCommand "kubectl describe configmap ot-config"
+    _clearScreen
+
+    _runCommand "kubectl apply -f pod-volume.yaml"
+    _runCommand "kubectl describe pod busybox"
+    _runCommand "kubectl exec busybox -- sh -c 'ls /etc/config'"
+    _runCommand "kubectl exec busybox -- sh -c 'cat /etc/config/attendance.yaml'"
+    _runCommand "kubectl exec busybox -- sh -c 'cat /etc/config/employee.yaml'"
+    _clearScreen
+
+    _runCommand "echo 'Update the ConfigMap'"
+    _runCommand "kubectl apply -f ot-configmap.yaml"
+    _runCommand "kubectl describe configmap ot-config"
+    _runCommand "kubectl exec busybox -- sh -c 'cat /etc/config/employee.yaml'"
+    _clearScreen
+
+    _runCommand "kubectl delete -f pod-volume.yaml"
+    _runCommand "kubectl delete -f ot-configmap.yaml"
+}

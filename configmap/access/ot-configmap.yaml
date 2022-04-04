@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: ot-config
+data:
+  attendance.yaml: |
+    # Application port on which application will listen
+    attendance:
+      api_port: "8081"
+
+    # Mysql connection details
+    mysql:
+      enabled: true
+      db_name: "attendancedb"
+      host: "mysql:3306"
+      username: root
+      password: password
+  employee.yaml: |
+    elasticsearch:
+      enabled: true
+      host: http://elastic:9200
+      username: elastic-updated
+      password: elastic
+
+    # Employee application port
+    employee:
+      api_port: "8083"
