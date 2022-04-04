@@ -1,0 +1,11 @@
+---
+# Elasticsearch connection details
+elasticsearch:
+  enabled: true
+  host: http://elastic:9200
+  username: elastic
+  password: elastic
+
+# Employee application port
+employee:
+  api_port: "8083"

@@ -1,0 +1,11 @@
+# Application port on which application will listen
+attendance:
+  api_port: "8081"
+
+# Mysql connection details
+mysql:
+  enabled: true
+  db_name: "attendancedb"
+  host: "mysql:3306"
+  username: root
+  password: password
