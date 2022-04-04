@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: attendance-config
+data:
+  attendance_api_port: "8081"
+  mysql_db_name: "attendancedb"
+  mysql_host: "mysql:3306"
+  mysql_username: root
+  mysql_password: password
+  mysql_app_value: "45000"
+  mysql-app_type: test-application
+  mysql_app-ui: web
+  mysql_enabled: "true"

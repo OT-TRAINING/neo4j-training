@@ -50,10 +50,11 @@ function showCaseCreateFromEnvFile() {
     _runCommand "kubectl get configmap"
     _runCommand "kubectl describe configmap otms-config" 
     _runCommand "kubectl delete configmap otms-config"
-
 }
 
 function showCaseCreateFromLiteral() {
-    _runCommand "kubectl create configmap otms-config --from-file=configs/attendance.yaml --from-file=configs/employee.yaml"
-
+    _runCommand "kubectl create configmap otms-config --from-literal=elasticsearch.enabled=true --from-literal=elasticsearch.host=http://elastic:9200"
+    _runCommand "kubectl get configmap"
+    _runCommand "kubectl describe configmap otms-config" 
+    _runCommand "kubectl delete configmap otms-config"
 }
