@@ -1,0 +1,30 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: read-only-binding
+  namespace: demo
+subjects:
+- kind: ServiceAccount
+  name: jenkins-sa
+  apiGroup: ""
+- kind: ServiceAccount
+  name: debug-sa
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: read-only
+  apiGroup: ""
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: write-only-binding
+  namespace: demo
+subjects:
+- kind: ServiceAccount
+  name: jenkins-sa
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: write-only
+  apiGroup: ""

@@ -35,6 +35,8 @@ function _generateUserCreds() {
     _runCommand "kubectl config set-context ${user}-context --cluster=minikube --namespace=${namespace} --user=${user}"
 }
 
+
+
 function _setup() {
     _runCommand "kubectl create namespace demo"
     _generateUserCreds sandy devops demo
@@ -111,6 +113,62 @@ function showCaseReadWriteForGroup() {
     _clearScreen
 
     _runCommand "kubectl delete -f roles/readWriteGroup.yaml"
+}
+function _generateTokenCreds() {
+    NAMESPACE=$1
+    POD_NAME=$2
+    SA_USER=$3
+
+    TOKEN=`kubectl exec ${POD_NAME} -n ${NAMESPACE} -- sh -c "cat /var/run/secrets/kubernetes.io/serviceaccount/token"`
+
+    kubectl config set-credentials ${SA_USER} --token=$TOKEN
+    kubectl config set-context ${SA_USER}-context --cluster=minikube --namespace=${NAMESPACE} --user=${SA_USER}
+}
+
+function showCaseServiceAccount() {
+    _runCommand "kubectl apply -f sa/roles.yaml"
+    _runCommand "cat sa/roles.yaml"
+    _clearScreen
+
+    _runCommand "kubectl apply -f sa/sa.yaml"
+    _runCommand "cat sa/sa.yaml"
+    _clearScreen
+
+    _runCommand "kubectl apply -f sa/sa-role-binding.yaml"
+    _runCommand "cat sa/sa-role-binding.yaml"
+    _clearScreen
+
+    _runCommand "kubectl apply -f sa/pod.yaml -n demo"
+    _runCommand "sleep 30s"
+    
+    _generateTokenCreds demo jenkins-busybox jenkins-sa
+    _generateTokenCreds demo debug-busybox debug-sa
+    _runCommand "kubectl delete -f sa/pod.yaml -n demo"
+    _clearScreen
+
+    _runCommand "kubectl --context=debug-sa-context apply -f sa/pod.yaml"
+    _runCommand "kubectl --context=jenkins-sa-context apply -f sa/pod.yaml"
+    _clearScreen
+
+    _runCommand "kubectl --context=jenkins-sa-context get pods"
+    _runCommand "kubectl --context=debug-sa-context get pods"
+    _clearScreen
+    
+    _runCommand "kubectl --context=debug-sa-context delete -f sa/pod.yaml"
+    _runCommand "kubectl --context=jenkins-sa-context delete -f sa/pod.yaml"
+    _clearScreen
+    
+    _cleanupTokenCreds jenkins-sa
+    _cleanupTokenCreds debug-sa
+    _runCommand "kubectl delete -f sa/sa-role-binding.yaml"
+    _runCommand "kubectl delete -f sa/sa.yaml"
+    _runCommand "kubectl delete -f sa/roles.yaml"
+}
+
+function _cleanupTokenCreds() {
+    local user=$1
+    _runCommand "kubectl config delete-context ${user}-context"
+    _runCommand "kubectl config unset users.${user}"
 }
 
 function _cleanupUserCreds() {
