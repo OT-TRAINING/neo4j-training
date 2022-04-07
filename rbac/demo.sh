@@ -93,6 +93,26 @@ function showCaseReadOnlyForGroup() {
     _clearScreen
 }
 
+function showCaseReadWriteForGroup() {
+    _runCommand "kubectl apply -f roles/readWriteGroup.yaml"
+    _runCommand "cat roles/readWriteGroup.yaml"
+    _clearScreen
+
+    _runCommand "kubectl --context=abhi-context apply -f pods/pod.yaml"
+    _runCommand "kubectl --context=sandy-context apply -f pods/pod.yaml"
+    _clearScreen
+
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _clearScreen
+    
+    _runCommand "kubectl --context=abhi-context delete -f pods/pod.yaml"
+    _runCommand "kubectl --context=sandy-context delete -f pods/pod.yaml"
+    _clearScreen
+
+    _runCommand "kubectl delete -f roles/readWriteGroup.yaml"
+}
+
 function _cleanupUserCreds() {
     local user=$1
     _runCommand "rm ${user}.key"
