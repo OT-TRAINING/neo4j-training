@@ -25,10 +25,11 @@ function _clearScreen() {
 
 function _generateUserCreds() {
     local user=$1
-    local namespace=$2
+    local group=$2
+    local namespace=$3
     CA_LOCATION=~/.minikube
     _runCommand "openssl genrsa -out ${user}.key 2048"
-    _runCommand "openssl req -new -key ${user}.key -out ${user}.csr -subj '/CN=${user}/O=bitnami'"
+    _runCommand "openssl req -new -key ${user}.key -out ${user}.csr -subj '/CN=${user}/O=${group}'"
     _runCommand "openssl x509 -req -in ${user}.csr -CA ${CA_LOCATION}/ca.crt -CAkey ${CA_LOCATION}/ca.key -CAcreateserial -out ${user}.crt -days 500"
     _runCommand "kubectl config set-credentials ${user} --client-certificate=${user}.crt  --client-key=${user}.key"
     _runCommand "kubectl config set-context ${user}-context --cluster=minikube --namespace=${namespace} --user=${user}"
@@ -36,11 +37,11 @@ function _generateUserCreds() {
 
 function _setup() {
     _runCommand "kubectl create namespace demo"
-    _generateUserCreds sandy demo
-    _generateUserCreds abhi demo
+    _generateUserCreds sandy devops demo
+    _generateUserCreds abhi dev demo
 }
 
-function showCaseReadOnly() {
+function showCaseReadOnlyForUser() {
     _runCommand "kubectl --context=sandy-context get pods"
     _runCommand "kubectl --context=abhi-context get pods"
     _clearScreen
@@ -56,9 +57,10 @@ function showCaseReadOnly() {
     _runCommand "cat roles/readOnlyAbhi.yaml"
     _runCommand "kubectl --context=sandy-context get pods"
     _runCommand "kubectl --context=abhi-context get pods"
+    _runCommand "kubectl delete -f roles/readOnlyAbhi.yaml"
 }
 
-function showCaseReadWrite() {
+function showCaseReadWriteForUser() {
     _runCommand "kubectl apply -f roles/readAbhiWriteSandy.yaml"
     _runCommand "cat roles/readAbhiWriteSandy.yaml"
     _clearScreen
@@ -76,6 +78,19 @@ function showCaseReadWrite() {
     _clearScreen
 
     _runCommand "kubectl delete -f roles/readAbhiWriteSandy.yaml"
+}
+
+function showCaseReadOnlyForGroup() {
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _clearScreen
+
+    _runCommand "kubectl apply -f roles/readOnlyDevOpsGroup.yaml"
+    _runCommand "cat roles/readOnlyDevOpsGroup.yaml"
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _runCommand "kubectl delete -f roles/readOnlyDevOpsGroup.yaml"
+    _clearScreen
 }
 
 function _cleanupUserCreds() {
