@@ -25,10 +25,12 @@ function _clearScreen() {
 
 function showCaseDynamicPV() {
     _runCommand "kubectl apply -f storage-class.yaml"
+    _runCommand "cat storage-class.yaml"
     _runCommand "kubectl get sc"
     _runCommand "kubectl describe sc standard-hunt"
     _clearScreen
     
+    _runCommand "cat pvc.yaml"
     _runCommand "kubectl apply -f pvc.yaml"
     _runCommand "kubectl get pvc"
     _runCommand "kubectl describe pvc dynamic-pvc"
@@ -36,6 +38,7 @@ function showCaseDynamicPV() {
     _clearScreen
 
    
+   _runCommand "cat pod.yaml"
     _runCommand "kubectl apply -f pod.yaml"
     _runCommand "kubectl get pods"
     _runCommand "kubectl describe pod pv-reader"
