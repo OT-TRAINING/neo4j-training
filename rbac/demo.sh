@@ -34,6 +34,50 @@ function _generateUserCreds() {
     _runCommand "kubectl config set-context ${user}-context --cluster=minikube --namespace=${namespace} --user=${user}"
 }
 
+function _setup() {
+    _runCommand "kubectl create namespace demo"
+    _generateUserCreds sandy demo
+    _generateUserCreds abhi demo
+}
+
+function showCaseReadOnly() {
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _clearScreen
+
+    _runCommand "kubectl apply -f roles/readOnlySandy.yaml"
+    _runCommand "cat roles/readOnlySandy.yaml"
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _runCommand "kubectl delete -f roles/readOnlySandy.yaml"
+    _clearScreen
+
+    _runCommand "kubectl apply -f roles/readOnlyAbhi.yaml"
+    _runCommand "cat roles/readOnlyAbhi.yaml"
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+}
+
+function showCaseReadWrite() {
+    _runCommand "kubectl apply -f roles/readAbhiWriteSandy.yaml"
+    _runCommand "cat roles/readAbhiWriteSandy.yaml"
+    _clearScreen
+
+    _runCommand "kubectl --context=abhi-context apply -f pods/pod.yaml"
+    _runCommand "kubectl --context=sandy-context apply -f pods/pod.yaml"
+    _clearScreen
+
+    _runCommand "kubectl --context=sandy-context get pods"
+    _runCommand "kubectl --context=abhi-context get pods"
+    _clearScreen
+    
+    _runCommand "kubectl --context=abhi-context delete -f pods/pod.yaml"
+    _runCommand "kubectl --context=sandy-context delete -f pods/pod.yaml"
+    _clearScreen
+
+    _runCommand "kubectl delete -f roles/readAbhiWriteSandy.yaml"
+}
+
 function _cleanupUserCreds() {
     local user=$1
     _runCommand "rm ${user}.key"
@@ -41,17 +85,6 @@ function _cleanupUserCreds() {
     _runCommand "rm ${user}.crt"
     _runCommand "kubectl config delete-context ${user}-context"
     _runCommand "kubectl config unset users.${user}"
-}
-
-function _setup() {
-    _runCommand "kubectl create namespace demo"
-    _generateUserCreds sandy demo
-    _generateUserCreds abhi demo
-}
-
-function showCaseNoAccess() {
-    _runCommand "kubectl --context=sandy-context get pods"
-    _runCommand "kubectl --context=abhi-context get pods"
 }
 
 function _tearDown() {

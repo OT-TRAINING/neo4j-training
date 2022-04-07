@@ -1,0 +1,50 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: demo
+  name: read-only
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods"]
+  verbs: ["get", "list", "watch" ]
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: demo
+  name: write-only
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicasets", "pods"]
+  verbs: ["create", "update", "patch", "delete" ]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: read-only-binding
+  namespace: demo
+subjects:
+- kind: User
+  name: sandy
+  apiGroup: ""
+- kind: User
+  name: abhi
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: read-only
+  apiGroup: ""
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: write-only-binding
+  namespace: demo
+subjects:
+- kind: User
+  name: sandy
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: write-only
+  apiGroup: ""
