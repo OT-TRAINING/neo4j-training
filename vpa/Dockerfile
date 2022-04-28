@@ -24,6 +24,6 @@ RUN mkdir ~/.kube
 
 VOLUME ~/.kube
 
-COPY ./script.sh /opt/
+COPY ./init.sh /opt/
 
 ENTRYPOINT ["/bin/sh","/opt/init.sh"]

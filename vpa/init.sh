@@ -13,12 +13,10 @@ then
     fi
 fi
 
-KUBECTL_VERSION=$(curl -s --cacert $CA_LOCATION -X GET https://${API_SERVER}:8443/version --header "Authorization: Bearer ${TOKEN}"  | jq '.gitVersion' | awk -F\" '{print $2}')
+#KUBECTL_VERSION=$(curl -s --cacert $CA_LOCATION -X GET https://${API_SERVER}:8443/version --header "Authorization: Bearer ${TOKEN}"  | jq '.gitVersion' | awk -F\" '{print $2}')
 
-wget "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+wget "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
 mv /opt/vpa/kubectl /bin
-
 chmod +x /bin/kubectl
-
 /bin/bash /opt/vpa/autoscaler/vertical-pod-autoscaler/hack/vpa-up.sh
